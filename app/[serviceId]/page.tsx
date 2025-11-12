@@ -1,14 +1,20 @@
 "use client";
 
+import AuthProtected from "@/components/AuthProtected";
 import { Card } from "@/components/ui/card";
+import { apiFactory } from "@/lib/api";
+import appStore from "@/store";
+import { IAccount } from "@/store/models";
 import { services, SubService } from "@/store/servicesStore";
 import { ChevronRight } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
+import { useEffect, useRef } from "react";
 
 export default function ServicePage() {
   const params = useParams();
   const router = useRouter();
   const serviceId = params.serviceId as string;
+  const isAccountsDataFetched = useRef(false);
 
   const selectedService = services[serviceId];
 
@@ -24,11 +30,23 @@ export default function ServicePage() {
     router.push(`/${serviceId}/${subService.id}`);
   };
 
+  const accessToken = appStore((state) => state.accessToken);
+  const setAccounts = appStore((state) => state.setAccounts);
+
+  useEffect(() => {
+    if (accessToken !== null && !isAccountsDataFetched.current) {
+      apiFactory.getUserAccounts(accessToken).then((response) => {
+        setAccounts(response.Data.Account as IAccount[]);
+        isAccountsDataFetched.current = true;
+      });
+    }
+  }, [accessToken]);
+
   return (
-    <>
+    <AuthProtected>
       <div className="space-y-8">
         {/* Service Header */}
-        <div className="bg-gradient-to-br from-blue-600 to-indigo-600 rounded-3xl p-12 shadow-xl text-white">
+        <div className="bg-linear-to-br from-blue-600 to-indigo-600 rounded-3xl p-12 shadow-xl text-white">
           <div className="flex items-start gap-8">
             <div className="p-6 bg-white/20 backdrop-blur-sm rounded-3xl">
               <div className="text-white">{selectedService.icon}</div>
@@ -49,14 +67,14 @@ export default function ServicePage() {
           <h3 className="text-2xl font-bold text-slate-900 mb-6">
             Available Services
           </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {selectedService.subServices.map((subService) => (
               <Card
                 key={subService.id}
-                className="group p-6 hover:shadow-xl transition-all duration-300 cursor-pointer border-2 border-slate-200 hover:border-blue-300 bg-white hover:-translate-y-1"
+                className="group p-6 hover:shadow-xl transition-all duration-300 cursor-pointer border-2 border-slate-200 hover:border-blue-300 bg-white hover:-translate-y-1 gap-2"
                 onClick={() => handleSubServiceClick(subService)}
               >
-                <div className="flex items-start justify-between mb-4">
+                <div className="flex items-start justify-between mb-1">
                   <div className="p-3 bg-blue-100 rounded-xl group-hover:bg-blue-200 transition-colors">
                     <div className="text-blue-600">{subService.icon}</div>
                   </div>
@@ -73,6 +91,6 @@ export default function ServicePage() {
           </div>
         </div>
       </div>
-    </>
+    </AuthProtected>
   );
 }

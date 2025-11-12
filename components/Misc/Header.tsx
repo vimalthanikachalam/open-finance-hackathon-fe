@@ -1,16 +1,32 @@
 "use client";
+import { clearSession } from "@/lib/sessionStorage";
 import appStore from "@/store";
-import { ArrowLeft, Landmark } from "lucide-react";
+import { ArrowLeft, Landmark, LogOut } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 
 type Props = {};
 
 const Header = (props: Props) => {
   const bottomActiveMenu = appStore((state) => state.bottomActiveMenu);
+  const isLoggedIn = appStore((state) => state.isLoggedIn);
+  const accessToken = appStore((state) => state.accessToken);
+  const clearTokenData = appStore((state) => state.clearTokenData);
   const path = usePathname();
   const router = useRouter();
+
   const handleBack = () => {
     router.back();
+  };
+
+  const handleLogout = () => {
+    // Clear session from cookies
+    clearSession();
+    // Clear store data
+    clearTokenData();
+    // Redirect to home
+    router.push("/");
+    // Reset menu state
+    appStore.setState({ bottomActiveMenu: "/" });
   };
 
   return (
@@ -46,12 +62,17 @@ const Header = (props: Props) => {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <button className="px-5 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-100 rounded-xl transition-all cursor-pointer">
-              Sign In
-            </button>
-            {/* <button className="px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 rounded-xl transition-all shadow-md hover:shadow-lg">
-              Get Started
-            </button> */}
+            {/* Show Logout button when user is logged in */}
+            {isLoggedIn && accessToken && (
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-linear-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 rounded-xl transition-all shadow-md hover:shadow-lg"
+                aria-label="Logout"
+              >
+                <LogOut className="w-4 h-4" />
+                Logout
+              </button>
+            )}
           </div>
         </div>
       </div>

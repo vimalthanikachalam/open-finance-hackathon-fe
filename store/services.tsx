@@ -8,6 +8,8 @@ interface SubService {
   icon: React.ReactNode;
   features: string[];
   benefits: string[];
+  // optional consent ids for this subservice (one or more strings)
+  consentIds?: string[];
 }
 
 interface Service {
@@ -15,6 +17,8 @@ interface Service {
   title: string;
   description: string;
   subServices: SubService[];
+  // optional base consent identifier for the whole service
+  baseConsentId?: string;
 }
 
 import {
@@ -58,6 +62,7 @@ const services: Record<string, Service> = {
           "Audit trails",
         ],
         benefits: ["Enhanced Security", "User Control", "Compliance Ready"],
+        consentIds: ["BaseConsentId"],
       },
       {
         id: "accounts",
@@ -71,6 +76,7 @@ const services: Record<string, Service> = {
           "Multi-account support",
         ],
         benefits: ["Unified View", "Easy Management", "Quick Access"],
+        consentIds: ["ReadAccountsBasic", "ReadAccountsDetail"],
       },
       {
         id: "balances",
@@ -88,6 +94,7 @@ const services: Record<string, Service> = {
           "Accurate Tracking",
           "Financial Planning",
         ],
+        consentIds: ["ReadBalances"],
       },
       {
         id: "beneficiaries",
@@ -101,6 +108,7 @@ const services: Record<string, Service> = {
           "Trusted contacts",
         ],
         benefits: ["Faster Payments", "Reduced Errors", "Enhanced Trust"],
+        consentIds: ["ReadBeneficiariesBasic", "ReadBeneficiariesDetail"],
       },
       {
         id: "direct-debits",
@@ -114,6 +122,7 @@ const services: Record<string, Service> = {
           "History tracking",
         ],
         benefits: ["Better Control", "Avoid Surprises", "Easy Management"],
+        consentIds: ["ReadDirectDebits"],
       },
       {
         id: "products",
@@ -127,6 +136,7 @@ const services: Record<string, Service> = {
           "Product benefits",
         ],
         benefits: ["Clear Overview", "Informed Decisions", "Maximize Benefits"],
+        consentIds: ["ReadProduct"],
       },
       {
         id: "scheduled-payments",
@@ -140,6 +150,10 @@ const services: Record<string, Service> = {
           "Reminders",
         ],
         benefits: ["Never Miss Payments", "Flexible Planning", "Peace of Mind"],
+        consentIds: [
+          "ReadScheduledPaymentsBasic",
+          "ReadScheduledPaymentsDetail",
+        ],
       },
       {
         id: "standing-orders",
@@ -153,6 +167,7 @@ const services: Record<string, Service> = {
           "Modification options",
         ],
         benefits: ["Save Time", "Consistent Payments", "Financial Automation"],
+        consentIds: ["ReadStandingOrdersBasic", "ReadStandingOrdersDetail"],
       },
       {
         id: "transactions",
@@ -166,6 +181,12 @@ const services: Record<string, Service> = {
           "Export options",
         ],
         benefits: ["Complete Transparency", "Better Insights", "Easy Tracking"],
+        consentIds: [
+          "ReadTransactionsBasic",
+          "ReadTransactionsDetail",
+          "ReadTransactionsCredits",
+          "ReadTransactionsDebits",
+        ],
       },
       {
         id: "parties",
@@ -183,8 +204,11 @@ const services: Record<string, Service> = {
           "Enhanced Collaboration",
           "Simplified Management",
         ],
+        consentIds: ["ReadParty", "ReadPartyUser", "ReadPartyUserIdentity"],
       },
     ],
+    // base consent for the whole service
+    baseConsentId: "BaseConsentId",
   },
   paymentInitiation: {
     icon: <CreditCard className="w-7 h-7" />,
@@ -245,6 +269,7 @@ const services: Record<string, Service> = {
         benefits: ["Global Reach", "Competitive Rates", "Secure Transfers"],
       },
     ],
+    baseConsentId: "PaymentInitiationBaseConsent",
   },
   productsLeads: {
     icon: <ShoppingBag className="w-7 h-7" />,
@@ -305,6 +330,7 @@ const services: Record<string, Service> = {
         benefits: ["Wealth Growth", "Diversification", "Professional Guidance"],
       },
     ],
+    baseConsentId: "ProductsBaseConsent",
   },
   confirmationPayee: {
     icon: <UserCheck className="w-7 h-7" />,
@@ -366,5 +392,8 @@ const services: Record<string, Service> = {
         benefits: ["Stay Informed", "Quick Response", "Better Decisions"],
       },
     ],
+    baseConsentId: "ConfirmationPayeeBaseConsent",
   },
 };
+
+export { services };

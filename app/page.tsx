@@ -1,6 +1,8 @@
 "use client";
 
+import ConsentModal from "@/components/ConsentModal";
 import { Card } from "@/components/ui/card";
+import appStore from "@/store";
 import { services } from "@/store/servicesStore";
 import {
   Building2,
@@ -13,9 +15,18 @@ import { useRouter } from "next/navigation";
 
 export default function ClearBankingPage() {
   const router = useRouter();
+  const { setConsentModalOpen, setSelectedService, accessToken, isLoggedIn } =
+    appStore();
 
-  const handleServiceClick = (serviceKey: string) => {
-    router.push(`/${serviceKey}`);
+  const handleServiceClick = (serviceKey: string, serviceTitle: string) => {
+    // If user is already authenticated, navigate directly to the service
+    if (accessToken && isLoggedIn) {
+      router.push(`/${serviceKey}`);
+    } else {
+      // If not authenticated, show consent modal
+      setSelectedService(serviceKey, serviceTitle);
+      setConsentModalOpen(true);
+    }
   };
 
   return (
@@ -29,7 +40,7 @@ export default function ClearBankingPage() {
         <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-balance">
           <span className="text-slate-900">Open Finance</span>
           <br />
-          <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-600 bg-clip-text text-transparent">
+          <span className="bg-linear-to-r from-blue-600 via-indigo-600 to-blue-600 bg-clip-text text-transparent">
             Services
           </span>
         </h1>
@@ -46,12 +57,12 @@ export default function ClearBankingPage() {
           <Card
             key={key}
             className="group relative overflow-hidden p-8 hover:shadow-2xl transition-all duration-500 cursor-pointer border-2 border-slate-200 hover:border-blue-300 bg-white hover:-translate-y-1"
-            onClick={() => handleServiceClick(key)}
+            onClick={() => handleServiceClick(key, service.title)}
           >
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-bl-full opacity-50 group-hover:opacity-100 transition-opacity" />
+            <div className="absolute top-0 right-0 w-32 h-32 bg-linear-to-br from-blue-100 to-indigo-100 rounded-bl-full opacity-50 group-hover:opacity-100 transition-opacity" />
             <div className="relative">
               <div className="flex items-start justify-between mb-6">
-                <div className="p-4 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300">
+                <div className="p-4 bg-linear-to-br from-blue-500 to-indigo-600 rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300">
                   <div className="text-white">{service.icon}</div>
                 </div>
                 <ChevronRight className="w-6 h-6 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-2 transition-all duration-300" />
@@ -112,6 +123,9 @@ export default function ClearBankingPage() {
           </div>
         </div>
       </div>
+
+      {/* Consent Modal */}
+      <ConsentModal />
     </div>
   );
 }
