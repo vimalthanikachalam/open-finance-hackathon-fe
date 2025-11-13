@@ -10,6 +10,8 @@ interface SubService {
   benefits: string[];
   // optional consent ids for this subservice (one or more strings)
   consentIds?: string[];
+  // ready status
+  isReady?: boolean;
 }
 
 interface Service {
@@ -19,6 +21,8 @@ interface Service {
   subServices: SubService[];
   // optional base consent identifier for the whole service
   baseConsentId?: string;
+  // ready status
+  isReady?: boolean;
 }
 
 import {
@@ -48,6 +52,7 @@ const services: Record<string, Service> = {
     title: "Bank Data Sharing",
     description:
       "Securely access and share comprehensive banking information with enhanced security protocols",
+    isReady: true,
     subServices: [
       {
         id: "account-access",
@@ -63,6 +68,7 @@ const services: Record<string, Service> = {
         ],
         benefits: ["Enhanced Security", "User Control", "Compliance Ready"],
         consentIds: ["BaseConsentId"],
+        isReady: false,
       },
       {
         id: "accounts",
@@ -77,6 +83,7 @@ const services: Record<string, Service> = {
         ],
         benefits: ["Unified View", "Easy Management", "Quick Access"],
         consentIds: ["ReadAccountsBasic", "ReadAccountsDetail"],
+        isReady: true,
       },
       {
         id: "balances",
@@ -95,6 +102,7 @@ const services: Record<string, Service> = {
           "Financial Planning",
         ],
         consentIds: ["ReadBalances"],
+        isReady: true,
       },
       {
         id: "beneficiaries",
@@ -109,6 +117,7 @@ const services: Record<string, Service> = {
         ],
         benefits: ["Faster Payments", "Reduced Errors", "Enhanced Trust"],
         consentIds: ["ReadBeneficiariesBasic", "ReadBeneficiariesDetail"],
+        isReady: true,
       },
       {
         id: "direct-debits",
@@ -123,6 +132,7 @@ const services: Record<string, Service> = {
         ],
         benefits: ["Better Control", "Avoid Surprises", "Easy Management"],
         consentIds: ["ReadDirectDebits"],
+        isReady: false,
       },
       {
         id: "products",
@@ -137,6 +147,7 @@ const services: Record<string, Service> = {
         ],
         benefits: ["Clear Overview", "Informed Decisions", "Maximize Benefits"],
         consentIds: ["ReadProduct"],
+        isReady: false,
       },
       {
         id: "scheduled-payments",
@@ -154,6 +165,7 @@ const services: Record<string, Service> = {
           "ReadScheduledPaymentsBasic",
           "ReadScheduledPaymentsDetail",
         ],
+        isReady: false,
       },
       {
         id: "standing-orders",
@@ -168,6 +180,7 @@ const services: Record<string, Service> = {
         ],
         benefits: ["Save Time", "Consistent Payments", "Financial Automation"],
         consentIds: ["ReadStandingOrdersBasic", "ReadStandingOrdersDetail"],
+        isReady: false,
       },
       {
         id: "transactions",
@@ -187,6 +200,7 @@ const services: Record<string, Service> = {
           "ReadTransactionsCredits",
           "ReadTransactionsDebits",
         ],
+        isReady: true,
       },
       {
         id: "parties",
@@ -205,6 +219,7 @@ const services: Record<string, Service> = {
           "Simplified Management",
         ],
         consentIds: ["ReadParty", "ReadPartyUser", "ReadPartyUserIdentity"],
+        isReady: false,
       },
     ],
     // base consent for the whole service
@@ -215,6 +230,7 @@ const services: Record<string, Service> = {
     title: "Payment Initiation",
     description:
       "Initiate secure payments with instant processing and comprehensive tracking",
+    isReady: false,
     subServices: [
       {
         id: "single-payments",
@@ -228,6 +244,7 @@ const services: Record<string, Service> = {
           "Receipt generation",
         ],
         benefits: ["Fast Processing", "Secure Transfers", "Easy to Use"],
+        isReady: false,
       },
       {
         id: "bulk-payments",
@@ -241,6 +258,7 @@ const services: Record<string, Service> = {
           "Progress tracking",
         ],
         benefits: ["Save Time", "Reduce Errors", "Efficient Management"],
+        isReady: false,
       },
       {
         id: "standing-order-setup",
@@ -254,6 +272,7 @@ const services: Record<string, Service> = {
           "Notification alerts",
         ],
         benefits: ["Automation", "Reliability", "Convenience"],
+        isReady: false,
       },
       {
         id: "international-payments",
@@ -267,6 +286,7 @@ const services: Record<string, Service> = {
           "Compliance checks",
         ],
         benefits: ["Global Reach", "Competitive Rates", "Secure Transfers"],
+        isReady: false,
       },
     ],
     baseConsentId: "PaymentInitiationBaseConsent",
@@ -276,6 +296,7 @@ const services: Record<string, Service> = {
     title: "Products and Leads",
     description:
       "Discover personalized financial products designed for your goals",
+    isReady: false,
     subServices: [
       {
         id: "personal-loans",
@@ -289,6 +310,7 @@ const services: Record<string, Service> = {
           "Easy application",
         ],
         benefits: ["Fast Access", "Flexible Repayment", "No Hidden Fees"],
+        isReady: false,
       },
       {
         id: "mortgages",
@@ -302,6 +324,7 @@ const services: Record<string, Service> = {
           "Expert advice",
         ],
         benefits: ["Dream Home", "Best Rates", "Expert Support"],
+        isReady: false,
       },
       {
         id: "savings",
@@ -315,6 +338,7 @@ const services: Record<string, Service> = {
           "Goal tracking",
         ],
         benefits: ["Earn More", "Financial Security", "Easy Management"],
+        isReady: false,
       },
       {
         id: "investments",
@@ -328,6 +352,7 @@ const services: Record<string, Service> = {
           "Expert insights",
         ],
         benefits: ["Wealth Growth", "Diversification", "Professional Guidance"],
+        isReady: false,
       },
     ],
     baseConsentId: "ProductsBaseConsent",
@@ -337,6 +362,7 @@ const services: Record<string, Service> = {
     title: "Confirmation Of Payee",
     description:
       "Verify recipient details and prevent fraud before making payments",
+    isReady: true,
     subServices: [
       {
         id: "name-verification",
@@ -350,6 +376,7 @@ const services: Record<string, Service> = {
           "High accuracy",
         ],
         benefits: ["Prevent Errors", "Fraud Protection", "Peace of Mind"],
+        isReady: true,
       },
       {
         id: "account-matching",
@@ -363,6 +390,7 @@ const services: Record<string, Service> = {
           "Error detection",
         ],
         benefits: ["Accurate Transfers", "Reduced Risk", "Confidence"],
+        isReady: false,
       },
       {
         id: "fraud-prevention",
@@ -376,6 +404,7 @@ const services: Record<string, Service> = {
           "Real-time monitoring",
         ],
         benefits: ["Enhanced Security", "Protected Funds", "Safe Banking"],
+        isReady: false,
       },
       {
         id: "risk-alerts",
@@ -390,6 +419,7 @@ const services: Record<string, Service> = {
           "Alert history",
         ],
         benefits: ["Stay Informed", "Quick Response", "Better Decisions"],
+        isReady: false,
       },
     ],
     baseConsentId: "ConfirmationPayeeBaseConsent",
@@ -397,3 +427,4 @@ const services: Record<string, Service> = {
 };
 
 export { services };
+export type { Service, SubService };

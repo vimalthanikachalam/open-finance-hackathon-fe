@@ -1,3 +1,4 @@
+import AIAssistant from "@/components/AIAssistant";
 import ConsentModal from "@/components/ConsentModal";
 import FloatingMenu from "@/components/Misc/FloatingMenu";
 import Header from "@/components/Misc/Header";
@@ -20,6 +21,7 @@ export default function RootLayout({
         <SessionInitializer />
         <ConsentModal />
         <Toaster />
+        <AIAssistant />
         {/* Navigation */}
         <Header />
         <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50 pb-24">

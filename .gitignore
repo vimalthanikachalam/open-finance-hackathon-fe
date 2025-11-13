@@ -38,3 +38,10 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 /server/node_modules
+
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.Python

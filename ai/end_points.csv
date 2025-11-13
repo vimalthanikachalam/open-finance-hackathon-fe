@@ -1,0 +1,18 @@
+end_point,description,cta,route,status
+/,View all available banking services and features,View Services,/,ready
+/bankDataSharing/accounts,View and manage your connected bank accounts with detailed information,View My Accounts,/bankDataSharing/accounts,ready
+/bankDataSharing/balances,Check real-time balance information across all your accounts,Check Balances,/bankDataSharing/balances,ready
+/bankDataSharing/beneficiaries,Manage and verify your trusted payment recipients and beneficiaries,View Beneficiaries,/bankDataSharing/beneficiaries,ready
+/bankDataSharing/transactions,View detailed transaction history and analytics for your accounts,View Transactions,/bankDataSharing/transactions,ready
+/confirmationPayee/name-verification,Verify payee name matches account details before payment,Verify Payee Name,/confirmationPayee/name-verification,ready
+account,View and manage your bank account information,View Accounts,/bankDataSharing/accounts,ready
+balance,Check your current account balance and available funds,Check Balance,/bankDataSharing/balances,ready
+transaction,Analyze your transaction history and spending patterns,View Transactions,/bankDataSharing/transactions,ready
+beneficiary,Manage your payment beneficiaries and recipients,Manage Beneficiaries,/bankDataSharing/beneficiaries,ready
+insights,Get financial insights and analytics based on your transactions,Financial Insights,/bankDataSharing/transactions,ready
+spending,Analyze your spending patterns and habits with detailed insights,View Spending,/bankDataSharing/transactions,ready
+dashboard,View your financial dashboard and overview,Go to Dashboard,/,ready
+pfm,Get AI-powered personal finance insights and spending analytics,View Insights,/bankDataSharing/transactions,ready
+personal finance,Track and analyze your personal finances with AI insights,View Analytics,/bankDataSharing/transactions,ready
+credit card,Get personalized ADCB credit card recommendations,View Credit Cards,/bankDataSharing/transactions,ready
+credit card recommendations,Discover ADCB credit cards that match your spending,See Recommendations,/bankDataSharing/transactions,ready

@@ -1,6 +1,7 @@
 "use client";
 
 import ConsentModal from "@/components/ConsentModal";
+import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import appStore from "@/store";
 import { services } from "@/store/servicesStore";
@@ -18,7 +19,16 @@ export default function ClearBankingPage() {
   const { setConsentModalOpen, setSelectedService, accessToken, isLoggedIn } =
     appStore();
 
-  const handleServiceClick = (serviceKey: string, serviceTitle: string) => {
+  const handleServiceClick = (
+    serviceKey: string,
+    serviceTitle: string,
+    isReady: boolean
+  ) => {
+    // Don't navigate if service is not ready
+    if (!isReady) {
+      return;
+    }
+
     // If user is already authenticated, navigate directly to the service
     if (accessToken && isLoggedIn) {
       router.push(`/${serviceKey}`);
@@ -28,6 +38,13 @@ export default function ClearBankingPage() {
       setConsentModalOpen(true);
     }
   };
+
+  // Sort services: ready services first
+  const sortedServices = Object.entries(services).sort(([, a], [, b]) => {
+    if (a.isReady && !b.isReady) return -1;
+    if (!a.isReady && b.isReady) return 1;
+    return 0;
+  });
 
   return (
     <div className="space-y-12">
@@ -53,38 +70,72 @@ export default function ClearBankingPage() {
 
       {/* Service Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {Object.entries(services).map(([key, service]) => (
-          <Card
-            key={key}
-            className="group relative overflow-hidden p-8 hover:shadow-2xl transition-all duration-500 cursor-pointer border-2 border-slate-200 hover:border-blue-300 bg-white hover:-translate-y-1"
-            onClick={() => handleServiceClick(key, service.title)}
-          >
-            <div className="absolute top-0 right-0 w-32 h-32 bg-linear-to-br from-blue-100 to-indigo-100 rounded-bl-full opacity-50 group-hover:opacity-100 transition-opacity" />
-            <div className="relative">
-              <div className="flex items-start justify-between mb-6">
-                <div className="p-4 bg-linear-to-br from-blue-500 to-indigo-600 rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300">
-                  <div className="text-white">{service.icon}</div>
+        {sortedServices.map(([key, service]) => {
+          const isReady = service.isReady ?? false;
+          const readySubServices = service.subServices.filter(
+            (sub) => sub.isReady ?? false
+          ).length;
+
+          return (
+            <Card
+              key={key}
+              className={`group relative overflow-hidden p-8 transition-all duration-500 border-2 border-slate-200 bg-white ${
+                isReady
+                  ? "hover:shadow-2xl cursor-pointer hover:border-blue-300 hover:-translate-y-1"
+                  : "opacity-60 cursor-not-allowed"
+              }`}
+              onClick={() => handleServiceClick(key, service.title, isReady)}
+            >
+              <div
+                className={`absolute top-0 right-0 w-32 h-32 bg-linear-to-br from-blue-100 to-indigo-100 rounded-bl-full ${
+                  isReady ? "opacity-50 group-hover:opacity-100" : "opacity-30"
+                } transition-opacity`}
+              />
+              <div className="relative">
+                <div className="flex items-start justify-between mb-6">
+                  <div
+                    className={`p-4 bg-linear-to-br from-blue-500 to-indigo-600 rounded-2xl shadow-lg ${
+                      isReady ? "group-hover:scale-110" : ""
+                    } transition-transform duration-300`}
+                  >
+                    <div className="text-white">{service.icon}</div>
+                  </div>
+                  {isReady ? (
+                    <ChevronRight className="w-6 h-6 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-2 transition-all duration-300" />
+                  ) : (
+                    <Badge
+                      variant="secondary"
+                      className="bg-slate-200 text-slate-600"
+                    >
+                      Service Not Integrated
+                    </Badge>
+                  )}
                 </div>
-                <ChevronRight className="w-6 h-6 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-2 transition-all duration-300" />
-              </div>
-              <h3 className="text-2xl font-bold text-slate-900 mb-3">
-                {service.title}
-              </h3>
-              <p className="text-slate-600 text-base leading-relaxed mb-6">
-                {service.description}
-              </p>
-              <div className="flex items-center justify-between pt-4 border-t border-slate-100">
-                <div className="flex items-center gap-2 text-sm font-semibold text-blue-600">
-                  <CheckCircle2 className="w-4 h-4" />
-                  <span>{service.subServices.length} Services</span>
+                <h3 className="text-2xl font-bold text-slate-900 mb-3">
+                  {service.title}
+                </h3>
+                <p className="text-slate-600 text-base leading-relaxed mb-6">
+                  {service.description}
+                </p>
+                <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+                  <div className="flex items-center gap-2 text-sm font-semibold text-blue-600">
+                    <CheckCircle2 className="w-4 h-4" />
+                    <span>
+                      {isReady
+                        ? `${readySubServices} of ${service.subServices.length} Services Ready`
+                        : `${service.subServices.length} Services (Coming Soon)`}
+                    </span>
+                  </div>
+                  {isReady && (
+                    <span className="text-sm font-medium text-slate-500 group-hover:text-blue-600 transition-colors">
+                      Explore →
+                    </span>
+                  )}
                 </div>
-                <span className="text-sm font-medium text-slate-500 group-hover:text-blue-600 transition-colors">
-                  Explore →
-                </span>
               </div>
-            </div>
-          </Card>
-        ))}
+            </Card>
+          );
+        })}
       </div>
 
       {/* Trust Section */}

@@ -42,6 +42,7 @@ export default function ConsentModal() {
   const [isLoading, setIsLoading] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [authPopup, setAuthPopup] = useState<Window | null>(null);
+  const [isAuthorizing, setIsAuthorizing] = useState(false); // Guard against double calls
 
   // derive current service metadata
   const svc = selectedService ? (services as any)[selectedService] : null;
@@ -63,6 +64,7 @@ export default function ConsentModal() {
   const handleClose = () => {
     setConsentModalOpen(false);
     setAgreedToTerms(false);
+    setIsAuthorizing(false); // Reset authorization guard
     // Close popup if open
     if (authPopup && !authPopup.closed) {
       authPopup.close();
@@ -78,11 +80,21 @@ export default function ConsentModal() {
 
   // Listen for OAuth callback messages
   useEffect(() => {
+    let isProcessing = false; // Guard against duplicate message processing
+
     const handleMessage = async (event: MessageEvent) => {
       // Verify origin matches your app
       if (event.origin !== window.location.origin) return;
 
       if (event.data?.type === "oauth_callback") {
+        // Prevent duplicate processing
+        if (isProcessing) {
+          console.log("Already processing OAuth callback, ignoring duplicate");
+          return;
+        }
+
+        isProcessing = true;
+
         if (event.data.success) {
           // Authorization successful - now exchange code for token
           const { code, codeVerifier, consentId } = event.data;
@@ -134,6 +146,8 @@ export default function ConsentModal() {
                   : "Failed to complete authorization",
               variant: "destructive",
             });
+          } finally {
+            isProcessing = false;
           }
         } else {
           // Authorization failed
@@ -143,9 +157,11 @@ export default function ConsentModal() {
               event.data.errorDescription || "Failed to authorize access",
             variant: "destructive",
           });
+          isProcessing = false;
         }
 
         setIsLoading(false);
+        setIsAuthorizing(false); // Reset the guard
 
         // Close the popup
         if (authPopup && !authPopup.closed) {
@@ -170,6 +186,12 @@ export default function ConsentModal() {
   ]);
 
   const handleAuthorize = async () => {
+    // Guard against double execution
+    if (isAuthorizing) {
+      console.log("Authorization already in progress, ignoring duplicate call");
+      return;
+    }
+
     if (!agreedToTerms) {
       toast({
         title: "Agreement Required",
@@ -188,6 +210,7 @@ export default function ConsentModal() {
       return;
     }
 
+    setIsAuthorizing(true); // Set guard immediately
     setIsLoading(true);
     try {
       // Call the consent creation API with selected permissions
@@ -209,6 +232,7 @@ export default function ConsentModal() {
       );
 
       if (!popup) {
+        setIsAuthorizing(false); // Reset guard on error
         throw new Error(
           "Popup was blocked. Please allow popups for this site."
         );
@@ -221,6 +245,7 @@ export default function ConsentModal() {
         if (popup.closed) {
           clearInterval(checkPopup);
           setIsLoading(false);
+          setIsAuthorizing(false); // Reset guard when popup closes
 
           console.log({
             title: "Authorization window closed",
@@ -239,6 +264,7 @@ export default function ConsentModal() {
         variant: "destructive",
       });
       setIsLoading(false);
+      setIsAuthorizing(false); // Reset guard on error
     }
   };
 
@@ -455,7 +481,7 @@ export default function ConsentModal() {
             </Button>
             <Button
               onClick={handleAuthorize}
-              disabled={!agreedToTerms || isLoading}
+              disabled={!agreedToTerms || isLoading || isAuthorizing}
               className="flex-1 sm:flex-initial bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg"
             >
               {isLoading ? (

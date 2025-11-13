@@ -30,6 +30,7 @@ export interface SubService {
   icon: React.ReactNode;
   features: string[];
   benefits: string[];
+  isReady?: boolean;
 }
 
 export interface Service {
@@ -37,6 +38,7 @@ export interface Service {
   title: string;
   description: string;
   subServices: SubService[];
+  isReady?: boolean;
 }
 
 export const services: Record<string, Service> = {
@@ -45,6 +47,7 @@ export const services: Record<string, Service> = {
     title: "Bank Data Sharing",
     description:
       "Securely access and share comprehensive banking information with enhanced security protocols",
+    isReady: true,
     subServices: [
       {
         id: "account-access",
@@ -59,6 +62,7 @@ export const services: Record<string, Service> = {
           "Audit trails",
         ],
         benefits: ["Enhanced Security", "User Control", "Compliance Ready"],
+        isReady: false,
       },
       {
         id: "accounts",
@@ -72,6 +76,7 @@ export const services: Record<string, Service> = {
           "Multi-account support",
         ],
         benefits: ["Unified View", "Easy Management", "Quick Access"],
+        isReady: true,
       },
       {
         id: "balances",
@@ -89,6 +94,7 @@ export const services: Record<string, Service> = {
           "Accurate Tracking",
           "Financial Planning",
         ],
+        isReady: true,
       },
       {
         id: "beneficiaries",
@@ -102,6 +108,7 @@ export const services: Record<string, Service> = {
           "Trusted contacts",
         ],
         benefits: ["Faster Payments", "Reduced Errors", "Enhanced Trust"],
+        isReady: true,
       },
       {
         id: "direct-debits",
@@ -115,6 +122,7 @@ export const services: Record<string, Service> = {
           "History tracking",
         ],
         benefits: ["Better Control", "Avoid Surprises", "Easy Management"],
+        isReady: false,
       },
       {
         id: "products",
@@ -128,6 +136,7 @@ export const services: Record<string, Service> = {
           "Product benefits",
         ],
         benefits: ["Clear Overview", "Informed Decisions", "Maximize Benefits"],
+        isReady: false,
       },
       {
         id: "scheduled-payments",
@@ -141,6 +150,7 @@ export const services: Record<string, Service> = {
           "Reminders",
         ],
         benefits: ["Never Miss Payments", "Flexible Planning", "Peace of Mind"],
+        isReady: false,
       },
       {
         id: "standing-orders",
@@ -154,6 +164,7 @@ export const services: Record<string, Service> = {
           "Modification options",
         ],
         benefits: ["Save Time", "Consistent Payments", "Financial Automation"],
+        isReady: false,
       },
       {
         id: "transactions",
@@ -167,6 +178,7 @@ export const services: Record<string, Service> = {
           "Export options",
         ],
         benefits: ["Complete Transparency", "Better Insights", "Easy Tracking"],
+        isReady: true,
       },
       {
         id: "parties",
@@ -184,6 +196,7 @@ export const services: Record<string, Service> = {
           "Enhanced Collaboration",
           "Simplified Management",
         ],
+        isReady: false,
       },
     ],
   },
@@ -192,6 +205,7 @@ export const services: Record<string, Service> = {
     title: "Payment Initiation",
     description:
       "Initiate secure payments with instant processing and comprehensive tracking",
+    isReady: false,
     subServices: [
       {
         id: "single-payments",
@@ -205,6 +219,7 @@ export const services: Record<string, Service> = {
           "Receipt generation",
         ],
         benefits: ["Fast Processing", "Secure Transfers", "Easy to Use"],
+        isReady: false,
       },
       {
         id: "bulk-payments",
@@ -218,6 +233,7 @@ export const services: Record<string, Service> = {
           "Progress tracking",
         ],
         benefits: ["Save Time", "Reduce Errors", "Efficient Management"],
+        isReady: false,
       },
       {
         id: "standing-order-setup",
@@ -231,6 +247,7 @@ export const services: Record<string, Service> = {
           "Notification alerts",
         ],
         benefits: ["Automation", "Reliability", "Convenience"],
+        isReady: false,
       },
       {
         id: "international-payments",
@@ -244,6 +261,7 @@ export const services: Record<string, Service> = {
           "Compliance checks",
         ],
         benefits: ["Global Reach", "Competitive Rates", "Secure Transfers"],
+        isReady: false,
       },
     ],
   },
@@ -252,6 +270,7 @@ export const services: Record<string, Service> = {
     title: "Products and Leads",
     description:
       "Discover personalized financial products designed for your goals",
+    isReady: false,
     subServices: [
       {
         id: "personal-loans",
@@ -265,6 +284,7 @@ export const services: Record<string, Service> = {
           "Easy application",
         ],
         benefits: ["Fast Access", "Flexible Repayment", "No Hidden Fees"],
+        isReady: false,
       },
       {
         id: "mortgages",
@@ -278,6 +298,7 @@ export const services: Record<string, Service> = {
           "Expert advice",
         ],
         benefits: ["Dream Home", "Best Rates", "Expert Support"],
+        isReady: false,
       },
       {
         id: "savings",
@@ -291,6 +312,7 @@ export const services: Record<string, Service> = {
           "Goal tracking",
         ],
         benefits: ["Earn More", "Financial Security", "Easy Management"],
+        isReady: false,
       },
       {
         id: "investments",
@@ -304,6 +326,7 @@ export const services: Record<string, Service> = {
           "Expert insights",
         ],
         benefits: ["Wealth Growth", "Diversification", "Professional Guidance"],
+        isReady: false,
       },
     ],
   },
@@ -312,6 +335,7 @@ export const services: Record<string, Service> = {
     title: "Confirmation Of Payee",
     description:
       "Verify recipient details and prevent fraud before making payments",
+    isReady: false,
     subServices: [
       {
         id: "name-verification",
@@ -325,6 +349,7 @@ export const services: Record<string, Service> = {
           "High accuracy",
         ],
         benefits: ["Prevent Errors", "Fraud Protection", "Peace of Mind"],
+        isReady: false,
       },
       {
         id: "account-matching",
@@ -338,6 +363,7 @@ export const services: Record<string, Service> = {
           "Error detection",
         ],
         benefits: ["Accurate Transfers", "Reduced Risk", "Confidence"],
+        isReady: false,
       },
       {
         id: "fraud-prevention",
@@ -351,6 +377,7 @@ export const services: Record<string, Service> = {
           "Real-time monitoring",
         ],
         benefits: ["Enhanced Security", "Protected Funds", "Safe Banking"],
+        isReady: false,
       },
       {
         id: "risk-alerts",
@@ -365,6 +392,7 @@ export const services: Record<string, Service> = {
           "Alert history",
         ],
         benefits: ["Stay Informed", "Quick Response", "Better Decisions"],
+        isReady: false,
       },
     ],
   },

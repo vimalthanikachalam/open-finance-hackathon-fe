@@ -19,14 +19,73 @@ const Header = (props: Props) => {
   };
 
   const handleLogout = () => {
-    // Clear session from cookies
+    // 1. Clear session from cookies
     clearSession();
-    // Clear store data
-    clearTokenData();
-    // Redirect to home
+
+    // 2. Clear AI chat history from sessionStorage
+    if (typeof window !== "undefined") {
+      sessionStorage.removeItem("ai-chat-history");
+      // Clear all sessionStorage just to be safe
+      sessionStorage.clear();
+
+      // Clear all localStorage
+      localStorage.clear();
+    }
+
+    // 3. Clear all cookies (including any other cookies that might exist)
+    if (typeof document !== "undefined") {
+      const cookies = document.cookie.split(";");
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i];
+        const eqPos = cookie.indexOf("=");
+        const name =
+          eqPos > -1 ? cookie.substring(0, eqPos).trim() : cookie.trim();
+        document.cookie = `${name}=; path=/; max-age=0; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+        // Also try to clear with domain
+        document.cookie = `${name}=; path=/; domain=${window.location.hostname}; max-age=0; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+      }
+    }
+
+    // 4. Reset the entire store to initial state
+    appStore.setState({
+      isLoggedIn: false,
+      bottomActiveMenu: "/",
+      isConsentModalOpen: false,
+      selectedService: null,
+      selectedServiceTitle: null,
+      selectedConsents: [],
+      grantedConsents: {},
+      oauthCodeVerifier: null,
+      oauthConsentId: null,
+      accessToken: null,
+      refreshToken: null,
+      tokenType: null,
+      tokenExpiresIn: null,
+      tokenScope: null,
+      Accounts: [],
+      selectedAccountId: null,
+      accountBalanceData: {
+        AccountId: String(),
+        Balance: [],
+      },
+      beneficiariesData: {
+        AccountId: String(),
+        Beneficiary: [],
+      },
+      transactionsData: {
+        AccountId: String(),
+        Transaction: [],
+      },
+    });
+
+    // 5. Navigate to home page and force a hard reload for fresh state
     router.push("/");
-    // Reset menu state
-    appStore.setState({ bottomActiveMenu: "/" });
+    // Use setTimeout to ensure navigation happens before reload
+    setTimeout(() => {
+      if (typeof window !== "undefined") {
+        window.location.href = "/";
+      }
+    }, 100);
   };
 
   return (
@@ -50,12 +109,12 @@ const Header = (props: Props) => {
                 appStore.setState({ bottomActiveMenu: "/" });
               }}
             >
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center">
+              <div className="w-10 h-10 bg-linear-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center">
                 <Landmark className="w-6 h-6 text-white" />
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-2xl font-bold text-slate-900">Clear</span>
-                <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                <span className="text-2xl font-bold bg-linear-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                   Banking
                 </span>
               </div>

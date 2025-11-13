@@ -80,6 +80,12 @@ export interface Meta {
   TotalPages: number;
 }
 
+export interface ITransactionResponseData {
+  Data: ITransactionData;
+  Meta: Meta;
+  Links: Links;
+}
+
 export interface ITransactionData {
   Transaction: ITransaction[];
   AccountId: string;
