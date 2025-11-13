@@ -137,6 +137,37 @@ export async function getCreditCardRecommendations(
   }
 }
 
+export interface PFMDashboardResponse {
+  image_base64: string;
+}
+
+/**
+ * Get PFM dashboard image based on transactions
+ */
+export async function getPFMDashboardImage(
+  transactions: any[]
+): Promise<PFMDashboardResponse> {
+  try {
+    const response = await fetch(`${AI_BASE_URL}/pfm-dashboard-image`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(transactions),
+    });
+
+    if (!response.ok) {
+      throw new Error(`AI service error: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error getting PFM dashboard image:", error);
+    throw error;
+  }
+}
+
 /**
  * Check if AI service is available
  */

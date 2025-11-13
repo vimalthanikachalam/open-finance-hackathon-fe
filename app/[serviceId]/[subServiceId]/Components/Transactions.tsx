@@ -6,6 +6,7 @@ import { Separator } from "@/components/ui/separator";
 import {
   getBalanceSuggestions,
   getCreditCardRecommendations,
+  getPFMDashboardImage,
   type CreditCardRecommendation,
 } from "@/lib/aiApi";
 import { apiFactory } from "@/lib/api";
@@ -51,6 +52,10 @@ const Transactions = (props: Props) => {
     useState(false);
   const [aiSuggestions, setAiSuggestions] = useState<string[]>([]);
   const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
+  const [pfmDashboardImage, setPfmDashboardImage] = useState<string | null>(
+    null
+  );
+  const [isLoadingPfmImage, setIsLoadingPfmImage] = useState(false);
 
   useEffect(() => {
     if (accessToken && selectedAccountId) {
@@ -58,6 +63,7 @@ const Transactions = (props: Props) => {
       // Clear previous recommendations and suggestions when switching accounts
       setCreditCardRecommendations([]);
       setAiSuggestions([]);
+      setPfmDashboardImage(null);
 
       apiFactory
         .getAccountTransactions(
@@ -126,6 +132,24 @@ const Transactions = (props: Props) => {
               })
               .finally(() => {
                 setIsLoadingRecommendations(false);
+              });
+
+            // Fetch PFM dashboard image
+            setIsLoadingPfmImage(true);
+            console.log(
+              `✅ Fetching PFM dashboard image for account: ${selectedAccountId}`
+            );
+
+            getPFMDashboardImage(transactions)
+              .then((response) => {
+                console.log("✅ PFM dashboard image received");
+                setPfmDashboardImage(response.image_base64);
+              })
+              .catch((error) => {
+                console.error("❌ Error fetching PFM dashboard image:", error);
+              })
+              .finally(() => {
+                setIsLoadingPfmImage(false);
               });
           } else {
             console.log(
@@ -337,7 +361,7 @@ const Transactions = (props: Props) => {
     <div className="space-y-6">
       {/* PFM Overview Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="p-6 bg-gradient-to-br from-emerald-50 to-teal-50 border-2 border-emerald-200 hover:shadow-xl transition-all hover:-translate-y-1">
+        <Card className="p-6 bg-linear-to-br from-emerald-50 to-teal-50 border-2 border-emerald-200 hover:shadow-xl transition-all hover:-translate-y-1">
           <div className="p-3 bg-emerald-600 rounded-xl w-fit mb-4">
             <Wallet className="w-6 h-6 text-white" />
           </div>
@@ -347,7 +371,7 @@ const Transactions = (props: Props) => {
           <div className="text-sm text-slate-600">Current Balance</div>
         </Card>
 
-        <Card className="p-6 bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 hover:shadow-xl transition-all hover:-translate-y-1">
+        <Card className="p-6 bg-linear-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 hover:shadow-xl transition-all hover:-translate-y-1">
           <div className="p-3 bg-blue-600 rounded-xl w-fit mb-4">
             <ArrowDownLeft className="w-6 h-6 text-white" />
           </div>
@@ -357,7 +381,7 @@ const Transactions = (props: Props) => {
           <div className="text-sm text-slate-600">Total Income</div>
         </Card>
 
-        <Card className="p-6 bg-gradient-to-br from-rose-50 to-orange-50 border-2 border-rose-200 hover:shadow-xl transition-all hover:-translate-y-1">
+        <Card className="p-6 bg-linear-to-br from-rose-50 to-orange-50 border-2 border-rose-200 hover:shadow-xl transition-all hover:-translate-y-1">
           <div className="p-3 bg-rose-600 rounded-xl w-fit mb-4">
             <ArrowUpRight className="w-6 h-6 text-white" />
           </div>
@@ -367,7 +391,7 @@ const Transactions = (props: Props) => {
           <div className="text-sm text-slate-600">Total Expenses</div>
         </Card>
 
-        <Card className="p-6 bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 hover:shadow-xl transition-all hover:-translate-y-1">
+        <Card className="p-6 bg-linear-to-br from-purple-50 to-pink-50 border-2 border-purple-200 hover:shadow-xl transition-all hover:-translate-y-1">
           <div className="p-3 bg-purple-600 rounded-xl w-fit mb-4">
             <Target className="w-6 h-6 text-white" />
           </div>
@@ -634,6 +658,54 @@ const Transactions = (props: Props) => {
               </Card>
             )}
         </div>
+
+        {/* AI Generated PFM Dashboard */}
+        {isLoadingPfmImage && (
+          <Card className="p-6 bg-linear-to-br from-violet-50 to-fuchsia-50 border-2 border-violet-200">
+            <div className="flex items-center justify-center gap-3 py-8">
+              <Loader2 className="w-6 h-6 text-violet-600 animate-spin" />
+              <p className="text-slate-600">
+                Generating AI-powered financial dashboard...
+              </p>
+            </div>
+          </Card>
+        )}
+
+        {!isLoadingPfmImage && pfmDashboardImage && (
+          <Card className="overflow-hidden bg-linear-to-br from-violet-50 to-fuchsia-50 border-2 border-violet-200">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <div className="p-2 bg-linear-to-br from-violet-600 to-fuchsia-600 rounded-lg">
+                  <Sparkles className="h-5 w-5 text-white" />
+                </div>
+                AI-Generated Financial Dashboard
+              </CardTitle>
+              <p className="text-sm text-muted-foreground">
+                Visual insights generated from your transaction data using
+                machine learning
+              </p>
+            </CardHeader>
+            <CardContent className="p-0">
+              <div className="bg-white p-4">
+                <img
+                  src={`data:image/png;base64,${pfmDashboardImage}`}
+                  alt="AI Generated PFM Dashboard"
+                  className="w-full h-auto rounded-lg shadow-lg"
+                />
+              </div>
+              <div className="p-4 bg-white/50 border-t border-violet-200">
+                <div className="flex items-center gap-2 text-xs text-slate-600">
+                  <Zap className="w-4 h-4 text-violet-600" />
+                  <span>
+                    This dashboard visualizes your spending patterns, top
+                    merchants, payment modes, and monthly trends using advanced
+                    analytics.
+                  </span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Transaction History */}
         <Card>
